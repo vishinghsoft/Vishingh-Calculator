@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Currency - VishinghSoft</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .currency-card {
+            background: var(--bg-color); padding: 25px; border-radius: 30px;
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+            max-width: 450px; margin: 20px auto;
+        }
+        select { font-size: 0.9rem !important; height: 50px; }
+        .rate-info { font-size: 0.85rem; text-align: center; margin-top: 15px; color: var(--accent-color); font-weight: 600; }
+        .loading-msg { text-align: center; font-size: 0.8rem; color: #888; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <span class="app-title">Currency Converter</span>
+        <span class="theme-btn" onclick="location.href='index.html'">🏠</span>
+    </div>
+
+    <div class="container">
+        <div class="currency-card">
+            <div id="status" class="loading-msg">Loading global currencies...</div>
+            
+            <label>Amount</label>
+            <input type="number" id="amount" value="1" placeholder="Enter amount">
+
+            <label>From</label>
+            <select id="fromCurrency" class="unit-select"></select>
+
+            <label>To</label>
+            <select id="toCurrency" class="unit-select"></select>
+
+            <button class="action-btn" id="convertBtn" onclick="convertCurrency()" disabled>Please Wait...</button>
+
+            <div id="result" class="result-box">Result: --</div>
+            <p id="rateText" class="rate-info"></p>
+            
+            <a href="index.html" style="display:block; text-align:center; margin-top:20px; color:var(--accent-color); text-decoration:none;">← Back to Tools</a>
+        </div>
+    </div>
+
+    <script>
+        const fromSelect = document.getElementById('fromCurrency');
+        const toSelect = document.getElementById('toCurrency');
+        const status = document.getElementById('status');
+        const convertBtn = document.getElementById('convertBtn');
+
+        // Flag mapping logic (Standard Country Codes)
+        const countryCodes = {
+            "AED": "AE", "AFN": "AF", "ALL": "AL", "AMD": "AM", "ANG": "AN", "AOA": "AO", "ARS": "AR", "AUD": "AU", "AWG": "AW", "AZN": "AZ", "BAM": "BA", "BBD": "BB", "BDT": "BD", "BGN": "BG", "BHD": "BH", "BIF": "BI", "BMD": "BM", "BND": "BN", "BOB": "BO", "BRL": "BR", "BSD": "BS", "BTC": "BTC", "BTN": "BT", "BWP": "BW", "BYN": "BY", "BZD": "BZ", "CAD": "CA", "CDF": "CD", "CHF": "CH", "CLF": "CL", "CLP": "CL", "CNH": "CN", "CNY": "CN", "COP": "CO", "CRC": "CR", "CUC": "CU", "CUP": "CU", "CVE": "CV", "CZK": "CZ", "DJF": "DJ", "DKK": "DK", "DOP": "DO", "DZD": "DZ", "EGP": "EG", "ERN": "ER", "ETB": "ET", "EUR": "EU", "FJD": "FJ", "FKP": "FK", "GBP": "GB", "GEL": "GE", "GGP": "GG", "GHS": "GH", "GIP": "GI", "GMD": "GM", "GNF": "GN", "GTQ": "GT", "GYD": "GY", "HKD": "HK", "HNL": "HN", "HRK": "HR", "HTG": "HT", "HUF": "HU", "IDR": "ID", "ILS": "IL", "IMP": "IM", "INR": "IN", "IQD": "IQ", "IRR": "IR", "ISK": "IS", "JEP": "JE", "JMD": "JM", "JOD": "JO", "JPY": "JP", "KES": "KE", "KGS": "KG", "KHR": "KH", "KMF": "KM", "KPW": "KP", "KRW": "KR", "KWD": "KW", "KYD": "KY", "KZT": "KZ", "LAK": "LA", "LBP": "LB", "LKR": "LK", "LRD": "LR", "LSL": "LS", "LYD": "LY", "MAD": "MA", "MDL": "MD", "MGA": "MG", "MKD": "MK", "MMK": "MM", "MNT": "MN", "MOP": "MO", "MRU": "MR", "MUR": "MU", "MVR": "MV", "MWK": "MW", "MXN": "MX", "MYR": "MY", "MZN": "MZ", "NAD": "NA", "NGN": "NG", "NIO": "NI", "NOK": "NO", "NPR": "NP", "NZD": "NZ", "OMR": "OM", "PAB": "PA", "PEN": "PE", "PGK": "PG", "PHP": "PH", "PKR": "PK", "PLN": "PL", "PYG": "PY", "QAR": "QA", "RON": "RO", "RSD": "RS", "RUB": "RU", "RWF": "RW", "SAR": "SA", "SBD": "SB", "SCR": "SC", "SDG": "SD", "SEK": "SE", "SGD": "SG", "SHP": "SH", "SLL": "SL", "SOS": "SO", "SRD": "SR", "SSP": "SS", "STD": "ST", "STN": "ST", "SVC": "SV", "SYP": "SY", "SZL": "SZ", "THB": "TH", "TJS": "TJ", "TMT": "TM", "TND": "TN", "TOP": "TO", "TRY": "TR", "TTD": "TT", "TWD": "TW", "TZS": "TZ", "UAH": "UA", "UGX": "UG", "USD": "US", "UYU": "UY", "UZS": "UZ", "VEF": "VE", "VES": "VE", "VND": "VN", "VUV": "VU", "WST": "WS", "XAF": "CF", "XAG": "XAG", "XAU": "XAU", "XCD": "XC", "XDR": "XD", "XOF": "BE", "XPD": "XPD", "XPF": "XP", "XPT": "XPT", "YER": "YE", "ZAR": "ZA", "ZMW": "ZM", "ZWL": "ZW"
+        };
+
+        // Flag convert function
+        function getFlagEmoji(countryCode) {
+            if (countryCode.length !== 2) return "🏳️";
+            return countryCode.toUpperCase().replace(/./g, char => 
+                String.fromCodePoint(char.charCodeAt(0) + 127397)
+            );
+        }
+
+        async function init() {
+            try {
+                // Fetch latest codes from API
+                const res = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
+                const data = await res.json();
+                const codes = Object.keys(data.rates);
+
+                let options = "";
+                codes.forEach(code => {
+                    const country = countryCodes[code] || "UN";
+                    const flag = getFlagEmoji(country);
+                    options += `<option value="${code}">${flag} ${code}</option>`;
+                });
+
+                fromSelect.innerHTML = options;
+                toSelect.innerHTML = options;
+
+                fromSelect.value = "USD";
+                toSelect.value = "INR";
+                
+                status.innerText = "All Countries Loaded ✅";
+                convertBtn.disabled = false;
+                convertBtn.innerText = "Convert Now";
+            } catch (err) {
+                status.innerText = "Offline Mode - Limited List";
+                // Fallback
+                fromSelect.innerHTML = `<option value="USD">🇺🇸 USD</option><option value="INR">🇮🇳 INR</option>`;
+            }
+        }
+
+        async function convertCurrency() {
+            const amtValue = parseFloat(document.getElementById('amount').value);
+            const from = fromSelect.value;
+            const to = toSelect.value;
+            const resBox = document.getElementById('result');
+            const rateTxt = document.getElementById('rateText');
+
+            if(isNaN(amtValue) || amtValue <= 0) return;
+
+            resBox.innerText = "Calculating...";
+
+            try {
+                const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
+                const data = await response.json();
+                const rate = data.rates[to];
+                const total = (amtValue * rate).toFixed(2);
+
+                resBox.innerText = `${amtValue} ${from} = ${total} ${to}`;
+                rateTxt.innerText = `1 ${from} = ${rate.toFixed(4)} ${to}`;
+            } catch (err) {
+                resBox.innerText = "Check Connection!";
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

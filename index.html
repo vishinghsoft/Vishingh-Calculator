@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vishingh Pro Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="logo.png" alt="Logo" class="sidebar-logo">
+            <div class="header-text">
+                <h2>Vishingh Pro</h2>
+                <p>VishinghSoft Tools</p>
+            </div>
+        </div>
+        <ul class="menu-list">
+            <li onclick="switchTool('standard')">🔢 Standard Calc</li>
+            <li onclick="switchTool('bmi')">⚖️ BMI Calculator</li>
+            <li onclick="switchTool('emi')">💰 EMI Calculator</li>
+            <li onclick="switchTool('gst')">📊 GST Calculator</li>
+            <li onclick="switchTool('unit')">📏 Unit Converter</li>
+            <li onclick="openPage('currency.html')">💱 Currency Converter</li>
+            
+            <hr class="divider">
+            
+            <li onclick="openPage('about.html')">ℹ️ About Us</li>
+            <li onclick="openPage('contact.html')">📧 Contact</li>
+            <li onclick="openPage('privacy-policy.html')">🛡️ Privacy Policy</li>
+            <li onclick="openPage('connect.html')">🙏Follow Me</li>
+            <li onclick="openPage('settings.html')">⚙️ Settings</li>
+        </ul>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <div class="top-bar">
+        <span class="menu-btn" onclick="toggleMenu()">☰</span>
+        <span class="app-title" id="current-tool-title">Standard</span>
+        <span class="theme-btn" onclick="toggleTheme()">🌙</span>
+    </div>
+
+    <div class="container">
+        <section id="standard-tool" class="tool-section active">
+            <div class="calculator">
+                <input type="text" id="display" placeholder="0" readonly>
+                <div class="buttons">
+                    <button class="btn-op" onclick="clearDisplay()">AC</button>
+                    <button class="btn-op" onclick="appendToDisplay('(')">(</button>
+                    <button class="btn-op" onclick="appendToDisplay(')')">)</button>
+                    <button class="btn-op" onclick="deleteLast()">DEL</button>
+                    
+                    <button class="btn-op" onclick="appendToDisplay('^')">^</button>
+                    <button class="btn-op" onclick="appendToDisplay('sqrt(')">√</button>
+                    <button class="btn-op" onclick="appendToDisplay('pi')">π</button>
+                    <button class="btn-op" onclick="appendToDisplay('/')">÷</button>
+                    
+                    <button onclick="appendToDisplay('7')">7</button>
+                    <button onclick="appendToDisplay('8')">8</button>
+                    <button onclick="appendToDisplay('9')">9</button>
+                    <button class="btn-op" onclick="appendToDisplay('*')">×</button>
+                    
+                    <button onclick="appendToDisplay('4')">4</button>
+                    <button onclick="appendToDisplay('5')">5</button>
+                    <button onclick="appendToDisplay('6')">6</button>
+                    <button class="btn-op" onclick="appendToDisplay('-')">-</button>
+                    
+                    <button onclick="appendToDisplay('1')">1</button>
+                    <button onclick="appendToDisplay('2')">2</button>
+                    <button onclick="appendToDisplay('3')">3</button>
+                    <button class="btn-op" onclick="appendToDisplay('+')">+</button>
+                    
+                    <button onclick="appendToDisplay('0')">0</button>
+                    <button onclick="appendToDisplay('.')">.</button>
+                    <button class="btn-equal" onclick="calculateResult()" style="grid-column: span 2;">=</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="bmi-tool" class="tool-section">
+            <div class="card">
+                <h3>BMI Calculator</h3>
+                <input type="number" id="weight" placeholder="Weight (kg)">
+                <input type="number" id="height" placeholder="Height (cm)">
+                <button class="action-btn" onclick="calcBMI()">Calculate</button>
+                <div id="bmi-res" class="result-box">Result: --</div>
+            </div>
+        </section>
+
+        <section id="emi-tool" class="tool-section">
+            <div class="card">
+                <h3>EMI Calculator</h3>
+                <input type="number" id="loan-amt" placeholder="Loan Amount (₹)">
+                <input type="number" id="interest-rate" placeholder="Interest %">
+                <input type="number" id="tenure" placeholder="Months">
+                <button class="action-btn" onclick="calcEMI()">Calculate EMI</button>
+                <div id="emi-res" class="result-box">Monthly EMI: --</div>
+            </div>
+        </section>
+
+        <section id="gst-tool" class="tool-section">
+            <div class="card">
+                <h3>GST Calculator</h3>
+                <input type="number" id="base-amt" placeholder="Base Amount (₹)">
+                <input type="number" id="gst-perc" placeholder="GST Rate %">
+                <button class="action-btn" onclick="calcGST()">Calculate Total</button>
+                <div id="gst-res" class="result-box">Total Amount: --</div>
+            </div>
+        </section>
+
+        <section id="unit-tool" class="tool-section">
+            <div class="card">
+                <h3>Unit Converter</h3>
+                <input type="number" id="unit-input" placeholder="Enter Value">
+                <select id="unit-type" class="unit-select">
+                    <option value="cm-km">cm to km</option>
+                    <option value="km-cm">km to cm</option>
+                    <option value="kg-g">kg to g</option>
+                    <option value="g-kg">g to kg</option>
+                </select>
+                <button class="action-btn" onclick="convertUnits()">Convert Now</button>
+                <div id="unit-res" class="result-box">Converted Value: --</div>
+            </div>
+        </section>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>

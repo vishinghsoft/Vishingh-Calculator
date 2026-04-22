@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Vishingh Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .settings-card { 
+            background: #e0e5ec; padding: 25px; border-radius: 25px; 
+            box-shadow: 9px 9px 16px #babecc, -9px -9px 16px #ffffff;
+            max-width: 500px; margin: 20px auto;
+        }
+        .setting-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px; margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .toggle-switch {
+            position: relative; display: inline-block; width: 45px; height: 24px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .4s; border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #4caf50; }
+        input:checked + .slider:before { transform: translateX(21px); }
+        
+        .back-home { display: block; text-align: center; margin-top: 20px; color: #4caf50; text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <span class="app-title">App Settings</span>
+    </div>
+
+    <div class="container">
+        <div class="settings-card">
+            <div class="setting-item">
+                <span>Dark Mode</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="dark-toggle" onclick="toggleTheme()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-item">
+                <span>Key Vibration</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="vibrate-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-item">
+                <span>App Version</span>
+                <span style="color: #888;">1.0.0 (Stable)</span>
+            </div>
+
+            <button class="action-btn" onclick="saveSettings()">Save Preferences</button>
+            <a href="index.html" class="back-home">← Back to Home</a>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
